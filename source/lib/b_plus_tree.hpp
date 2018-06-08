@@ -3,6 +3,7 @@
 #include<iostream>
 #include<cmath>
 #include<cstring>
+#include<fstream>
 #include"utility.hpp"
 #include"vector.hpp"
 
@@ -11,20 +12,18 @@ namespace sjtu {
 	class BPTree {
         typedef long long ll;
 	public:
-		friend class ticket_map;
-		friend class order_user;
 		const char* file;
 		static const int K = 4096;
 
-		//max1,max2记录的分别是过渡节点、叶子节点的最大空间，min1,min2分别为前者的一半;
-		static const int max1 = 6; // 2000 * 8 / (sizeof(Key));
-		static const int max2 = 6; // 2000 * 8 / (sizeof(T));
+		//max1,max2è®°å½•çš„åˆ†åˆ«æ˜¯è¿‡æ¸¡èŠ‚ç‚¹ã€å¶å­èŠ‚ç‚¹çš„æœ€å¤§ç©ºé—´ï¼Œmin1,min2åˆ†åˆ«ä¸ºå‰è€…çš„ä¸€åŠ;
+		static const int max1 = 20; // 2000 * 8 / (sizeof(Key));
+		static const int max2 = 20; // 2000 * 8 / (sizeof(T));
 		static const int min1 = max1 / 2;
 		static const int min2 = max2 / 2;
-		static const int max0 = 6;
+		static const int max0 = 20;
 
-		//节点保存了当前节点的位置，父亲的位置，前驱、后继的位置，一些信息，大小，是否是叶子节点;
-		//所有的数组都是0_based;
+		//èŠ‚ç‚¹ä¿å­˜äº†å½“å‰èŠ‚ç‚¹çš„ä½ç½®ï¼Œçˆ¶äº²çš„ä½ç½®ï¼Œå‰é©±ã€åŽç»§çš„ä½ç½®ï¼Œä¸€äº›ä¿¡æ¯ï¼Œå¤§å°ï¼Œæ˜¯å¦æ˜¯å¶å­èŠ‚ç‚¹;
+		//æ‰€æœ‰çš„æ•°ç»„éƒ½æ˜¯0_based;
 		class node {
 		public:
 			ll pos, father, prev, succ;
@@ -41,25 +40,26 @@ namespace sjtu {
 			}
 		};
 
-		//保存了BPTree的根节点的位置，以及整个文件的最后位置，每次的插入都从最后开始，从4096开始插入;
+		//ä¿å­˜äº†BPtreeçš„æ ¹èŠ‚ç‚¹çš„ä½ç½®ï¼Œä»¥åŠæ•´ä¸ªæ–‡ä»¶çš„æœ€åŽä½ç½®ï¼Œæ¯æ¬¡çš„æ’å…¥éƒ½ä»Žæœ€åŽå¼€å§‹ï¼Œä»Ž4096å¼€å§‹æ’å…¥;
 		ll root;
 		ll at_end;
 		FILE* File;
 
 		Compare cmp;
 
-		//开文件，并且定位;
+		//å¼€æ–‡ä»¶ï¼Œå¹¶ä¸”å®šä½;
 		void file_seek(ll s) {
 			fseek(File, s, SEEK_SET);
 		}
 
-		//关文件;
+		//å…³æ–‡ä»¶;
 		void file_close() {
 			fclose(File);
 		}
 
-		//构造函数需传参文件指针，默认函数会事先构造一个root;
-		BPTree(const char* f) :file(f) {
+		//æž„é€ å‡½æ•°éœ€ä¼ å‚æ–‡ä»¶æŒ‡é’ˆï¼Œé»˜è®¤å‡½æ•°ä¼šäº‹å…ˆæž„é€ ä¸€ä¸ªroot;
+        BPTree(const char* f) :file(f) {
+			fclose(fopen(f , "w"));
 			File = fopen(f, "rb+");
 			file = f;
 			node rt;
@@ -75,19 +75,19 @@ namespace sjtu {
 			fclose(File);
 		}
 
-		//删库跑路;
+		//åˆ åº“è·‘è·¯;
 		void clear() {
-			File = fopen(file, "w");
-			fclose(File);
+			fclose(fopen(file, "w"));
 			node rt;
 			rt.pos = at_end = K;
 			at_end += K;
 			root = rt.pos;
-			file_open(file, rt.pos);
+			File = fopen(file, "rb+");
+			file_seek(rt.pos);
 			fwrite((char*)(&rt), sizeof(rt), 1, File);
 		}
 
-		//在当前块中查找键值所在位置，若键值小于当前的第一个键值，则返回-1;
+		//åœ¨å½“å‰å—ä¸­æŸ¥æ‰¾é”®å€¼æ‰€åœ¨ä½ç½®ï¼Œè‹¥é”®å€¼å°äºŽå½“å‰çš„ç¬¬ä¸€ä¸ªé”®å€¼ï¼Œåˆ™è¿”å›ž-1;
 		int search(const Key& kk, node* ss) {
 			//	if(cmp(kk , ss->key[0])){
 			//		return -1;
@@ -100,7 +100,7 @@ namespace sjtu {
 			return ss->size;
 		}
 
-		//在所有块中查找键值所在位置，只会找到对应的块的位置，不能查找在头的;
+		//åœ¨æ‰€æœ‰å—ä¸­æŸ¥æ‰¾é”®å€¼æ‰€åœ¨ä½ç½®ï¼Œåªä¼šæ‰¾åˆ°å¯¹åº”çš„å—çš„ä½ç½®ï¼Œä¸èƒ½æŸ¥æ‰¾åœ¨å¤´çš„;
 		ll search_node(const Key& kk) {
 			char* tmp[K];
 			file_seek(root);
@@ -116,7 +116,7 @@ namespace sjtu {
 			return st->pos;
 		}
 
-		//查找主函数;
+		//æŸ¥æ‰¾ä¸»å‡½æ•°;
 		pair<T&, bool> query(const Key& kk) {
 			char* tmp[K];
 			ll p = search_node(kk);
@@ -135,7 +135,7 @@ namespace sjtu {
 			}
 		}
 
-		//中序遍历
+		//ä¸­åºéåŽ†
 		void traverse(node* s, vector<pair<Key, T> > &a) {
 			char* tmp[K];
 			if (s->is_leaf) {
@@ -144,7 +144,7 @@ namespace sjtu {
 				}
 			}
 			else {
-				//	a.push_back(pair<Key, T>(-1，-1));
+				//	a.push_back(pair<Key, T>(-1ï¼Œ-1));
 				for (int i = 0; i < s->size; ++i) {
 					char*tmp2[K];
 					file_seek(s->son[i]);
@@ -152,7 +152,7 @@ namespace sjtu {
 					node* now = (node*)tmp2;
 					traverse(now, a);
 				}
-				//	a.push_back(pair<Key, T>(-2， - 2 ));
+				//	a.push_back(pair<Key, T>(-2ï¼Œ - 2 ));
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace sjtu {
 			return s;
 		}
 
-		//将一个块中第几个元素及其之后的元素后移一个;
+		//å°†ä¸€ä¸ªå—ä¸­ç¬¬å‡ ä¸ªå…ƒç´ åŠå…¶ä¹‹åŽçš„å…ƒç´ åŽç§»ä¸€ä¸ª;
 		void move_back(int k, node* ss) {
 			for (int i = ss->size; i > k; --i) {
 				if (ss->is_leaf) {
@@ -181,7 +181,7 @@ namespace sjtu {
 			ss->size++;
 		}
 
-		//将一个块中第几个元素及其之后的元素前移一个;
+		//å°†ä¸€ä¸ªå—ä¸­ç¬¬å‡ ä¸ªå…ƒç´ åŠå…¶ä¹‹åŽçš„å…ƒç´ å‰ç§»ä¸€ä¸ª;
 		void move_front(int k, node* ss) {
 			for (int i = k - 1; i < ss->size - 1; ++i) {
 				if (ss->is_leaf) {
@@ -196,7 +196,7 @@ namespace sjtu {
 			ss->size--;
 		}
 
-		//更新一个节点的父亲的键值，若相等则不作为，若不等则修改;
+		//æ›´æ–°ä¸€ä¸ªèŠ‚ç‚¹çš„çˆ¶äº²çš„é”®å€¼ï¼Œè‹¥ç›¸ç­‰åˆ™ä¸ä½œä¸ºï¼Œè‹¥ä¸ç­‰åˆ™ä¿®æ”¹;
 		void update_father(node* s) {
 			if (s->pos == root)return;
 			char* tmp[K];
@@ -217,7 +217,7 @@ namespace sjtu {
 			}
 		}
 
-		//更新一个块的儿子的父亲;
+		//æ›´æ–°ä¸€ä¸ªå—çš„å„¿å­çš„çˆ¶äº²;
 		void update_son(node* s, int k) {
 			if (s->is_leaf)  return;
 			char* tmp[K];
@@ -229,7 +229,7 @@ namespace sjtu {
 			fwrite((char*)so, K, 1, File);
 		}
 
-		//分裂新块;
+		//åˆ†è£‚æ–°å—;
 		void divide(node* a, int p) {
 			char*tmp[K];
 			node new_node;
@@ -287,7 +287,7 @@ namespace sjtu {
 				fwrite((char*)fa, K, 1, File);
 		}
 
-		//插入主函数
+		//æ’å…¥ä¸»å‡½æ•°
 		bool insert(const Key& kk, const T& dd) {
 			char* tmp[K];
 			ll nn;
@@ -367,7 +367,7 @@ namespace sjtu {
 			return true;
 		}
 
-		//修改主函数;
+		//ä¿®æ”¹ä¸»å‡½æ•°;
 		void modify(const Key& kk,const T& dd) {
 			char* tmp[K];
 			ll p = search_node(kk);
@@ -383,7 +383,7 @@ namespace sjtu {
 			fwrite((char*)now, K, 1, File);
 		}
 
-		//向左兄弟借儿子，若前者有足够的返回true;
+		//å‘å·¦å…„å¼Ÿå€Ÿå„¿å­ï¼Œè‹¥å‰è€…æœ‰è¶³å¤Ÿçš„è¿”å›žtrue;
 		bool borrow_left(node* a) {
 			char* tmp[K];
 			char* tmp2[K];
@@ -443,7 +443,7 @@ namespace sjtu {
 			}
 		}
 
-		//向右子树借一个孩子;
+		//å‘å³å­æ ‘å€Ÿä¸€ä¸ªå­©å­;
 		bool borrow_right(node* a) {
 			char* tmp[K];
 			char* tmp2[K];
@@ -503,7 +503,7 @@ namespace sjtu {
 			}
 		}
 
-		//合并两个块;
+		//åˆå¹¶ä¸¤ä¸ªå—;
 		void merge_left(node* s) {
 			char* tmp[K];
 			char* tmp2[K];
@@ -642,7 +642,7 @@ namespace sjtu {
 			}
 		}
 
-		//合并主函数;
+		//åˆå¹¶ä¸»å‡½æ•°;
 		void merge(node* s) {
 			if (s->pos == root) return;
 			char* tmp[K];
@@ -702,7 +702,7 @@ namespace sjtu {
 			}
 		}
 
-		//删除主函数;
+		//åˆ é™¤ä¸»å‡½æ•°;
 		void erase(const Key& kk) {
 			char* tmp[K];
 			char* tmp2[K];

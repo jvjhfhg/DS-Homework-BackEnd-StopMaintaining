@@ -13,7 +13,7 @@ namespace sjtu {
         String name;
         Time arrive;
         Time start;
-
+        
     };
 
     class Train {

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdio>
+#include <iostream>
+#include <fstream>
 
 #include "lib/algorithm.hpp"
 #include "lib/b_plus_tree.hpp"
@@ -8,11 +10,11 @@
 
 namespace sjtu {
     class User {
+    public:
         enum Privilege {
-            Unregistered = 0, User = 1, Admin = 2
+            Unregistered = 0, Normal = 1, Admin = 2
         };
 
-    public:
         String name;
         String password;
         String email;
@@ -24,7 +26,7 @@ namespace sjtu {
         User(const char *name, const char *password, const char *email, const char *phone, int id):
             name(name), password(password), email(email), phone(phone), id(id) {
             if (id == 2018) priv = Privilege::Admin;
-            else priv = Privilege::User;
+            else priv = Privilege::Normal;
         }
 
         void Modify(const char *_name, const char *_password, const char *_email, const char *_phone) {
@@ -42,17 +44,32 @@ namespace sjtu {
         
     public:
         Users(): T("data_users") {
-            fopen("data_users", "w");
-            currentID = 2018;
+            std::fstream file("data_users_id", std::fstream::in);
+            if (!file)
+                currentID = 2018;
+            else
+                file >> currentID;
+            file.close();
+        }
+
+        ~Users() {
+            std::fstream idFile("data_users_id", std::fstream::out);
+            idFile << currentID << std::endl;
+            // std::cerr << currentID << std::endl;
+            idFile.close();
         }
         
         int Register(const char *name, const char *password, const char *email, const char *phone) {
+            // std::cerr << "in" << std::endl;
             T.insert(currentID, User(name, password, email, phone, currentID));
+            // std::cerr << "out" << std::endl;
             return currentID++;
         }
 
         bool Login(int id, const String &password) {
+            // std::cerr << "xixi" << std::endl;
             auto user = T.query(id);
+            // std::cerr << "cnbb" << std::endl;
             if (user.second == false) return false;
             return user.first.password == password;
         }
@@ -70,11 +87,10 @@ namespace sjtu {
         }
 
         bool ModifyPrivilege(int id1, int id2, User::Privilege priv) {
-            if (priv == User::Privilege::User) return false;
             auto user = T.query(id1);
             if (user.second == false || user.first.priv != User::Privilege::Admin) return false;
-            auto user = T.query(id2);
-            if (user.second == false || user.first.priv == User::Privilege::Admin) return false;
+            user = T.query(id2);
+            if (user.second == false || (user.first.priv == User::Privilege::Admin && priv == User::Privilege::Normal)) return false;
             user.first.priv = priv;
             T.modify(id2, user.first);
             return true;

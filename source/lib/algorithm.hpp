@@ -14,10 +14,13 @@ namespace sjtu {
         int _length;
 
     public:
-        String() = default;
+        String() {
+            _str[0] = '\0';
+            _length = 0;
+        }
 
         String(const char *str) {
-            _length = strlen(_str);
+            _length = strlen(str);
             for (int i = 0; i < _length; ++i)
                 _str[i] = str[i];
             _str[_length] = '\0';
@@ -28,6 +31,14 @@ namespace sjtu {
             for (int i = 0; i < _length; ++i)
                 _str[i] = oth._str[i];
             _str[_length] = '\0';
+        }
+
+        String &operator = (const char *str) {
+            _length = strlen(str);
+            for (int i = 0; i < _length; ++i)
+                _str[i] = str[i];
+            _str[_length] = '\0';
+            return *this;
         }
 
         String &operator = (const String &oth) {
@@ -58,7 +69,11 @@ namespace sjtu {
             return true;
         }
 
-        const int Length() const {
+        bool operator != (const String &oth) const {
+            return !(*this == oth);
+        }
+
+        int Length() const {
             return _length;
         }
 
@@ -74,10 +89,22 @@ namespace sjtu {
 
         Time(const char *s) {
             sscanf(s, "%d:%d", &hour, &minute);
+            Stdize();
         }
 
         bool operator < (const Time &oth) const {
             return hour == oth.hour ? minute < oth.minute : hour < oth.hour;
+        }
+
+        Time operator + (const Time &oth) const {
+            Time res(hour + oth.hour, minute + oth.minute);
+            res.Stdize();
+            return res;
+        }
+
+        void Stdize() {
+            hour = (hour + minute / 60) % 24;
+            minute %= 60;
         }
 
         const char *ToString() const {
@@ -88,16 +115,32 @@ namespace sjtu {
     };
 
     struct Date {
+        static constexpr int days[13] = {
+            0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        };
+        static constexpr int days2[13] = {
+            0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        };
+
         int year, month, day;
 
         Date(int y = 0, int m = 0, int d = 0): year(y), month(m), day(d) {}
 
         Date(const char *s) {
             sscanf(s, "%d-%d-%d", &year, &month, &day);
+            Stdize();
         }
 
         bool operator < (const Date &oth) const {
             return year == oth.year ? (month == oth.month ? day < oth.day : month < oth.month) : year < oth.year;
+        }
+
+        bool IsLeap() const {
+            return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+        }
+
+        void Stdize() {
+            
         }
 
         const char *ToString() {

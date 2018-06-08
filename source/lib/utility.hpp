@@ -8,22 +8,32 @@ namespace sjtu {
         T2 second;
         
     public:
-        constexpr pair(): first(), second() {}
+        pair(): first(), second() {}
 
         pair(const pair &oth) = default;
 
-        pair(pair &&oth) = default;
+        pair &operator = (const pair &oth) {
+            if (this == &oth) return *this;
+            first = oth.first;
+            second = oth.second;
+            return *this;
+        }
+        
+        template <class U1, class U2>
+        pair &operator = (const pair<U1, U2> &oth) {
+            if (this == &oth) return *this;
+            first = oth.first;
+            second = oth.second;
+            return *this;
+        }
 
         pair(const T1 &x, const T2 &y): first(x), second(y) {}
 
         template <class U1, class U2>
-        pair(U1 &&x, U2 &&y): first(x), second(y) {}
+        pair(const U1 &x, const U2 &y): first(x), second(y) {}
 
         template<class U1, class U2>
         pair(const pair<U1, U2> &oth): first(oth.first), second(oth.second) {}
-
-        template<class U1, class U2>
-        pair(pair<U1, U2> &&oth): first(oth.first), second(oth.second) {}
 
         friend bool operator < (const pair &x, const pair &y) {
             return x.first == y.first ? x.second < y.second : x.first < y.first;

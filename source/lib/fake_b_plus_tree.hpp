@@ -2,8 +2,6 @@
 
 #include <fstream>
 #include <map>
-#include <cstdio>
-using namespace std;
 
 namespace sjtu {
     template <class Key, class T>
@@ -18,17 +16,17 @@ namespace sjtu {
             if (!io) {
                 io.open(filename, std::fstream::out | std::fstream::binary);
                 int cnt = 0;
-                io.write(reinterpret_cast<const char *>(&cnt), sizeof cnt);
+                io.write((const char *)(&cnt), sizeof cnt);
             }
             io.close();
             io.open(filename, std::fstream::in | std::fstream::out | std::fstream::binary);
             int cnt = 0;
-            io.read(reinterpret_cast<char *>(&cnt), sizeof cnt);
+            io.read((char *)(&cnt), sizeof cnt);
             Key key;
             T val;
             for (int i = 0; i < cnt; ++i) {
-                io.read(reinterpret_cast<char *>(&key), sizeof key);
-                io.read(reinterpret_cast<char *>(&val), sizeof val);
+                io.read((char *)(&key), sizeof key);
+                io.read((char *)(&val), sizeof val);
                 Tree.insert(std::make_pair(key, val));
             }
             io.close();
@@ -37,10 +35,10 @@ namespace sjtu {
         ~BPTree() {
             io.open(filename, std::fstream::out | std::fstream::binary);
             int cnt = Tree.size();
-            io.write(reinterpret_cast<const char *>(&cnt), sizeof cnt);
+            io.write((const char *)(&cnt), sizeof cnt);
             for (auto i : Tree) {
-                io.write(reinterpret_cast<const char *>(&i.first), sizeof i.first);
-                io.write(reinterpret_cast<const char *>(&i.second), sizeof i.second);
+                io.write((const char *)(&i.first), sizeof i.first);
+                io.write((const char *)(&i.second), sizeof i.second);
             }
             io.close();
         }

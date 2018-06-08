@@ -3,7 +3,10 @@
 #include "lib/algorithm.hpp"
 #include "lib/utility.hpp"
 #include "lib/vector.hpp"
+
 #include "User.hpp"
+#include "Train.hpp"
+#include "Ticket.hpp"
 
 namespace sjtu {
     Users users;
@@ -45,7 +48,9 @@ namespace sjtu {
          * Train related
          */
 
-
+        bool AddTrain() {
+            return true;
+        }
         
         /* 
          * System related

@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "lib/algorithm.hpp"
-#include "lib/b_plus_tree.hpp"
+#include "lib/fake_b_plus_tree.hpp"
 #include "lib/utility.hpp"
 
 namespace sjtu {
@@ -23,8 +23,9 @@ namespace sjtu {
         int id;
 
         User() = default;
-        User(const char *name, const char *password, const char *email, const char *phone, int id):
-            name(name), password(password), email(email), phone(phone), id(id) {
+
+        User(const char *_name, const char *_password, const char *_email, const char *_phone, int _id):
+            name(_name), password(_password), email(_email), phone(_phone), id(_id) {
             if (id == 2018) priv = Privilege::Admin;
             else priv = Privilege::Normal;
         }

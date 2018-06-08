@@ -14,12 +14,7 @@ namespace sjtu {
         int _length;
 
     public:
-        String() {
-            _str[0] = '\0';
-            _length = 0;
-        }
-
-        String(const char *str) {
+        String(const char *str = "") {
             _length = strlen(str);
             for (int i = 0; i < _length; ++i)
                 _str[i] = str[i];
@@ -80,12 +75,19 @@ namespace sjtu {
         const char *Str() const {
             return _str;
         }
+
+        void Read() {
+            scanf("%s", _str);
+            _length = strlen(_str);
+        }
     };
 
     struct Time {
         int hour, minute;
 
-        Time(int h = 0, int m = 0): hour(h), minute(m) {}
+        Time(int h = 0, int m = 0): hour(h), minute(m) {
+            Stdize();
+        }
 
         Time(const char *s) {
             sscanf(s, "%d:%d", &hour, &minute);
@@ -115,20 +117,25 @@ namespace sjtu {
     };
 
     struct Date {
-        static constexpr int days[13] = {
+        static constexpr int days[2][13] = {{
             0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        };
-        static constexpr int days2[13] = {
+        }, {
             0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        };
+        }};
 
         int year, month, day;
 
-        Date(int y = 0, int m = 0, int d = 0): year(y), month(m), day(d) {}
+        Date(int y = 0, int m = 0, int d = 0): year(y), month(m), day(d) {
+            Stdize();
+        }
 
         Date(const char *s) {
             sscanf(s, "%d-%d-%d", &year, &month, &day);
             Stdize();
+        }
+
+        Date operator + (int t) const {
+            return Date(year, month, day + t);
         }
 
         bool operator < (const Date &oth) const {
@@ -140,7 +147,14 @@ namespace sjtu {
         }
 
         void Stdize() {
-            
+            year += (month - 1) / 12;
+            month = (month - 1) % 12 + 1;
+            while (day > days[IsLeap()][month]) {
+                day -= days[IsLeap()][month++];
+                if (month == 13) {
+                    ++year; month = 1;
+                }
+            }
         }
 
         const char *ToString() {

@@ -7,9 +7,13 @@
 #include "User.hpp"
 #include "Train.hpp"
 #include "Ticket.hpp"
+#include "Place.hpp"
 
 namespace sjtu {
+    Places places;
+    
     Users users;
+    Trains trains;
 
     class Interactor {
     public:
@@ -42,14 +46,30 @@ namespace sjtu {
          * Ticket related
          */
 
-
+        
         
         /* 
          * Train related
          */
 
-        bool AddTrain() {
-            return true;
+        bool AddTrain(const String &tid, const String &name, char catalog, int stationCnt, int ticKindCnt, String *tickets, Station *stations) {
+            return trains.Insert(tid, name, catalog, stationCnt, ticKindCnt, tickets, stations);
+        }
+        
+        bool SaleTrain(const String &tid) {
+            return trains.Sale(tid);
+        }
+        
+        pair<Train, bool> QueryTrain(const String &tid) {
+            return trains.Query(tid);
+        }
+        
+        bool DeleteTrain(const String &tid) {
+            return trains.Delete(tid);
+        }
+        
+        bool ModifyTrain(const String &tid, const String &name, char catalog, int stationCnt, int ticKindCnt, String *tickets, Station *stations) {
+            return trains.Modify(tid, name, catalog, stationCnt, ticKindCnt, tickets, stations);
         }
         
         /* 
@@ -58,6 +78,7 @@ namespace sjtu {
 
         static void Clean() {
             users.Clear();
+            trains.Clear();
         }
     };
 }

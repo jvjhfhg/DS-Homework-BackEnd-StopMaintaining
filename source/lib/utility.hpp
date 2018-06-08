@@ -59,4 +59,9 @@ namespace sjtu {
             return !(x == y);
         }
     };
+    
+    template <class T1, class T2>
+    pair<T1, T2> make_pair(const T1 &first, const T2 &second) {
+        return pair<T1, T2>(first, second);
+    }
 }

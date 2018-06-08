@@ -97,6 +97,10 @@ namespace sjtu {
         bool operator < (const Time &oth) const {
             return hour == oth.hour ? minute < oth.minute : hour < oth.hour;
         }
+        
+        bool operator == (const Time &oth) const {
+            return hour == oth.hour && minute == oth.minute;
+        }
 
         Time operator + (const Time &oth) const {
             Time res(hour + oth.hour, minute + oth.minute);
@@ -140,6 +144,10 @@ namespace sjtu {
 
         bool operator < (const Date &oth) const {
             return year == oth.year ? (month == oth.month ? day < oth.day : month < oth.month) : year < oth.year;
+        }
+        
+        bool operator == (const Date &oth) const {
+            return year == oth.year && month == oth.month && day == oth.day;
         }
 
         bool IsLeap() const {

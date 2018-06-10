@@ -86,9 +86,9 @@ namespace sjtu {
 				file_seek(0);
 				fread(&root , 8 , 1 ,File);
 				file_seek(8);
-				fwrite(&at_end , 8 , 1 ,File);
+				fread(&at_end , 8 , 1 ,File);
 				file_seek(16);
-				fwrite(&at_end2 , 8 , 1 ,File);
+				fread(&at_end2 , 8 , 1 ,File);
 			}
 		}
 
@@ -358,6 +358,12 @@ namespace sjtu {
 				fwrite((char*)(&new_node), sizeof(new_node), 1, File);
 				fseek(File, root, SEEK_SET);
 				fwrite((char*)rt, K, 1, File);
+    			file_seek(0);
+    			fwrite(&root , 8 , 1 ,File);
+    			file_seek(8);
+    			fwrite(&at_end , 8 , 1 ,File);
+    			file_seek(16);
+    			fwrite(&at_end2 , 8 , 1 ,File);
 				return true;
 			}
 			node* now;

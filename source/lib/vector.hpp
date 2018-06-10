@@ -1,5 +1,4 @@
-#ifndef SJTU_VECTOR_HPP
-#define SJTU_VECTOR_HPP
+#pragma once
 
 #include "exceptions.hpp"
 
@@ -641,5 +640,3 @@ public:
 
 
 }
-
-#endif

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdio>
 #include <cstring>
 
 namespace sjtu {
@@ -95,13 +96,13 @@ namespace sjtu {
             return res;
         }
 
-        int ToInt() {
+        const int ToInt() const {
             static int x;
             sscanf(_str, "%d", &x);
             return x;
         }
 
-        double ToFloat() {
+        const double ToFloat() const {
             static double x;
             sscanf(_str, "%lf", &x);
             return x;
@@ -133,8 +134,12 @@ namespace sjtu {
         }
 
         Time operator - (const Time &oth) const {
-            if (*this < oth) return Time(hour + 24 - oth.hour, minute - oth.minute);
-            return Time(hour - oth.hour, minute - oth.minute);
+            Time tmp(*this);
+            if (tmp < oth) tmp.hour += 24;
+            if (tmp.minute < oth.minute) {
+                --tmp.hour; tmp.minute += 60;
+            }
+            return Time(tmp.hour - oth.hour, tmp.minute - oth.minute);
         }
 
         void Stdize() {
@@ -150,12 +155,6 @@ namespace sjtu {
     };
 
     struct Date {
-        static constexpr int days[2][13] = {{
-            0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        }, {
-            0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        }};
-
         int year, month, day;
 
         Date(int y = 0, int m = 0, int d = 0): year(y), month(m), day(d) {
@@ -184,6 +183,12 @@ namespace sjtu {
         }
 
         void Stdize() {
+            static constexpr int days[2][13] = {{
+                0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+            }, {
+                0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+            }};
+            
             year += (month - 1) / 12;
             month = (month - 1) % 12 + 1;
             while (day > days[IsLeap()][month]) {

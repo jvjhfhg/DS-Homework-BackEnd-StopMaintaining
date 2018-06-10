@@ -26,6 +26,10 @@ namespace sjtu {
             T.insert(name, T.Size() + 1);
         }
 
+        int Size() const {
+            return T.Size();
+        }
+
         void Clear() {
             T.clear();
             T2.clear();

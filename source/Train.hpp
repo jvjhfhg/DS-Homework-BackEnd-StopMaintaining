@@ -3,7 +3,7 @@
 #include <cstdio>
 
 #include "lib/algorithm.hpp"
-#include "lib/fake_b_plus_tree.hpp"
+#include "lib/b_plus_tree.hpp"
 #include "lib/utility.hpp"
 #include "lib/vector.hpp"
 
@@ -15,20 +15,27 @@ namespace sjtu {
         int name;
         Time arriveTime;
         Time startTime;
-        String currency;
-        double price;
+        String currency[5];
+        double price[5];
 
         Station() = default;
 
-        Station(int _name, const char *_arrive, const char *_start, const char *_curr, double _price):
-            name(_name), arriveTime(_arrive), startTime(_start), currency(_curr), price(_price) {}
+        Station(int _name, const char *_arrive, const char *_start, String *_curr, double *_price):
+            name(_name), arriveTime(_arrive), startTime(_start) {
+            for (int i = 0; i < 5; ++i) {
+                price[i] = _price[i];
+                currency[i] = _curr[i];
+            }
+        }
         
         Station(const Station &oth) {
             name = oth.name;
             arriveTime = oth.arriveTime;
             startTime = oth.startTime;
-            currency = oth.currency;
-            price = oth.price;
+            for (int i = 0; i < 5; ++i) {
+                price[i] = oth.price[i];
+                currency[i] = oth.currency[i];
+            }
         }
         
         Station &operator = (const Station &oth) {
@@ -36,8 +43,10 @@ namespace sjtu {
             name = oth.name;
             arriveTime = oth.arriveTime;
             startTime = oth.startTime;
-            currency = oth.currency;
-            price = oth.price;
+            for (int i = 0; i < 5; ++i) {
+                price[i] = oth.price[i];
+                currency[i] = oth.currency[i];
+            }
             return *this;
         }
     };
@@ -95,12 +104,10 @@ namespace sjtu {
             
             for (int i = 0; i < t.first.stationCnt; ++i)
                 for (int j = i + 1; j < t.first.stationCnt; ++j)
-                    tickets.Insert(t.first.stations[i].name, t.first.stations[j].name, t.first.catalog, t.first.id);
-            
-            // TODO
+                    tickets.Insert(t.first.stations[i].name, t.first.stations[j].name, t.first.catalog, tid);
             
             t.first.status = Train::Status::Public;
-            T.modify(t.first.id, t.first);
+            T.modify(tid, t.first);
             
             return true;
         }

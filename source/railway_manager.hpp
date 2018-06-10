@@ -64,7 +64,7 @@ namespace sjtu {
         static vector<vector<String>> _QueryTicket(const String &loc1, const String &loc2, const Date &date, char catalog) {
             int l1 = places.Query(loc1), l2 = places.Query(loc2);
             auto t = trains.tickets.Query(l1, l2, catalog);
-            vector<vector<String>> res; 
+            vector<vector<String>> res;
             if (t.second == false || l1 == 0 || l2 == 0) {
                 return res;
             }

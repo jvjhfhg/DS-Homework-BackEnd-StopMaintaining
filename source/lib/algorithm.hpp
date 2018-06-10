@@ -148,7 +148,7 @@ namespace sjtu {
         }
 
         const char *ToString() const {
-            static char res[6];
+            static char res[45];
             sprintf(res, "%02d:%02d", hour, minute);
             return res;
         }
@@ -200,7 +200,7 @@ namespace sjtu {
         }
 
         const char *ToString() const {
-            static char res[11];
+            static char res[45];
             sprintf(res, "%04d-%02d-%02d", year, month, day);
             return res;
         }

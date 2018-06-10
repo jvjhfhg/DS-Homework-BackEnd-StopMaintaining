@@ -15,16 +15,6 @@ int main() {
     char a[45], b[45], c[45], d[45], e[45];
     int x, y, z;
     
-#ifdef __linux
-    system("mkdir data");
-    system("mkdir data/tickets");
-    system("mkdir data/orders");
-#else
-    system("mkdir data");
-    system("mkdir data\\tickets");
-    system("mkdir data\\orders");
-#endif
-    
     // int cnt = 0;
 
     while (~scanf("%s", s)) {

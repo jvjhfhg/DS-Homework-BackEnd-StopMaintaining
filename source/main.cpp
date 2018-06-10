@@ -34,8 +34,8 @@ int main() {
         } else if (opt == "query_profile") {
             scanf("%d", &x);
             auto res = sjtu::Interactor::QueryProfile(x);
-            if (res.second == false) puts("0");
-            else printf("%s %s %s %d\n", res.first.name.Str(), res.first.email.Str(), res.first.phone.Str(), (int)res.first.priv);
+            for (int i = 0; i < (int)res.size(); ++i)
+                printf("%s%c", res[i].Str(), " \n"[i == (int)res.size() - 1]);
         } else if (opt == "modify_profile") {
             scanf("%d%s%s%s%s", &x, a, b, c, d);
             printf("%d\n", (int)sjtu::Interactor::ModifyProfile(x, a, b, c, d));

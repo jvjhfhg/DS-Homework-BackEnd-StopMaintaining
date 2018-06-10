@@ -2,22 +2,33 @@
 
 #include <fstream>
 
-#include "lib/fake_b_plus_tree.hpp"
+#include "lib/file_map.hpp"
 
 namespace sjtu {
     class Places {
-        BPTree<String, int> T;
+        FileMap<String, int> T;
+        FileMap<int, String> T2;
         
     public:
-        Places(): T("data/name_places") {}
+        Places(): T("data/name_places"), T2("data/id_places") {}
         
         int Query(const String &name) {
             return T.query(name).first;
         }
+
+        String QueryName(int idx) {
+            return T2.query(idx).first;
+        }
         
         void Insert(const String &name) {
             if (T.count(name)) return;
+            T2.insert(T.Size() + 1, name);
             T.insert(name, T.Size() + 1);
+        }
+
+        void Clear() {
+            T.clear();
+            T2.clear();
         }
     };
 }

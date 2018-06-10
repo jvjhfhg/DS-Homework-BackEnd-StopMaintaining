@@ -80,6 +80,32 @@ namespace sjtu {
             scanf("%s", _str);
             _length = strlen(_str);
         }
+
+        static String Int(int x) {
+            String res;
+            sprintf(res._str, "%d", x);
+            res._length = strlen(res._str);
+            return res;
+        }
+
+        static String Float(double x) {
+            String res;
+            sprintf(res._str, "%f", x);
+            res._length = strlen(res._str);
+            return res;
+        }
+
+        int ToInt() {
+            static int x;
+            sscanf(_str, "%d", &x);
+            return x;
+        }
+
+        double ToFloat() {
+            static double x;
+            sscanf(_str, "%lf", &x);
+            return x;
+        }
     };
 
     struct Time {
@@ -103,9 +129,12 @@ namespace sjtu {
         }
 
         Time operator + (const Time &oth) const {
-            Time res(hour + oth.hour, minute + oth.minute);
-            res.Stdize();
-            return res;
+            return Time(hour + oth.hour, minute + oth.minute);
+        }
+
+        Time operator - (const Time &oth) const {
+            if (*this < oth) return Time(hour + 24 - oth.hour, minute - oth.minute);
+            return Time(hour - oth.hour, minute - oth.minute);
         }
 
         void Stdize() {
@@ -165,7 +194,7 @@ namespace sjtu {
             }
         }
 
-        const char *ToString() {
+        const char *ToString() const {
             static char res[11];
             sprintf(res, "%04d-%02d-%02d", year, month, day);
             return res;

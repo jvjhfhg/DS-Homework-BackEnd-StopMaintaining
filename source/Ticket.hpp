@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "lib/algorithm.hpp"
 #include "lib/fake_b_plus_tree.hpp"
@@ -46,7 +48,7 @@ namespace sjtu {
             String file;
             if (t.second == false) {
                 static char tmp[45];
-                sprintf(tmp, "data/%04d_%04d_%c", loc1, loc2, catalog);
+                sprintf(tmp, "data/tickets/%d_%d_%c", loc1, loc2, catalog);
                 file = tmp;
                 T.insert(key, file);
             } else {
@@ -109,11 +111,125 @@ namespace sjtu {
         }
         
         void Clear() {
+            system("rm data/tickets/*");
             T.clear();
         }
     };
     
     class OrderUser {
-        
+        struct KeyData {
+            int id;
+            Date date;
+            char catalog;
+
+            KeyData() = default;
+
+            KeyData(int _id, const Date &_date, char _catalog):
+                id(_id), date(_date), catalog(_catalog) {}
+
+            bool operator < (const KeyData &oth) const {
+                return id == oth.id ? (date == oth.date ? catalog < oth.catalog : date < oth.date) : id < oth.id;
+            }
+
+            bool operator == (const KeyData &oth) const {
+                return id == oth.id && date == oth.date && catalog == oth.catalog;
+            }
+        };
+
+        struct Key2 {
+            String tid;
+            int loc1, loc2;
+
+            Key2() = default;
+
+            Key2(const String &_tid, int _l1, int _l2): tid(_tid), loc1(_l1), loc2(_l2) {}
+
+            bool operator < (const Key2 &oth) const {
+                return tid == oth.tid ? (loc1 == oth.loc1 ? loc2 < oth.loc2 : loc1 < oth.loc1) : tid < oth.tid;
+            }
+
+            bool operator == (const Key2 &oth) const {
+                return tid == oth.tid && loc1 == oth.loc1 && loc2 == oth.loc2;
+            }
+        };
+
+        BPTree<KeyData, String> T;
+
+    public:
+        struct Order {
+            int loc1;
+            Date date1;
+            Time time1;
+            int loc2;
+            Date date2;
+            Time time2;
+            int cnt[5];
+
+            Order() = default;
+
+            Order(int _l1, const Date &_d1, const Time &_t1, int _l2, const Date &_d2, const Time &_t2, int *_cnt):
+                loc1(_l1), date1(_d1), time1(_t1), loc2(_l2), date2(_d2), time2(_t2) {
+                for (int i = 0; i < 5; ++i)
+                    cnt[i] = _cnt[i];
+            }
+        };
+
+    public:
+        OrderUser(): T("data/order_user") {}
+
+        vector<pair<String, Order>> Query(int id, const Date &date, char catalog) {
+            auto t = T.query(KeyData(id, date, catalog));
+            if (t.second == false) return vector<pair<String, Order>>();
+            vector<pair<String, Order>> res;
+            
+            BPTree<Key2, Order> T2(t.first.Str());
+            auto vec = T2.traverse();
+            for (int i = 0; i < (int)vec.size(); ++i) {
+                res.push_back(make_pair(vec[i].first.tid, vec[i].second));
+            }
+            return res;
+        }
+
+        const int *QueryActualTicket(int id, const String &tid, const Date &date, char catalog, int l1, int l2) {
+            static int res[5];
+            memset(res, 0, sizeof res);
+            auto t = T.query(KeyData(id, date, catalog));
+            if (t.second == false) return res;
+            
+            BPTree<Key2, Order> T2(t.first.Str());
+            auto order = T2.query(Key2(tid, l1, l2));
+            if (order.second == false) return res;
+            for (int i = 0; i < 5; ++i)
+                res[i] = order.first.cnt[i];
+            return res;
+        }
+
+        void Add(int id, const String &tid, char catalog, int l1, const Date &d1, const Time &t1, int l2, const Date &d2, const Time &t2, int *cnt) {
+            auto t = T.query(KeyData(id, d1, catalog));
+            String file;
+            if (t.second == false) {
+                static char tmp[45];
+                sprintf(tmp, "data/orders/%d_%s_%c", id, d1.ToString(), catalog);
+                file = tmp;
+                T.insert(KeyData(id, d1, catalog), file);
+            } else {
+                file = t.first;
+            }
+
+            BPTree<Key2, Order> T2(file.Str());
+            auto order = T2.query(Key2(tid, l1, l2));
+            if (order.second == false)
+                T2.insert(Key2(tid, l1, l2), Order(l1, d1, t1, l2, d2, t2, cnt));
+            else {
+                for (int i = 0; i < 5; ++i)
+                    order.first.cnt[i] += cnt[i];
+                T2.modify(Key2(tid, l1, l2), order.first);
+            }
+        }
+
+        void Clear() {
+            system("rm data/orders/*");
+            T.clear();
+        }
     };
 }

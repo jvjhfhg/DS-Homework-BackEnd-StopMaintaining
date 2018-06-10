@@ -72,10 +72,11 @@ namespace sjtu {
     };
 
     class Trains {
-    private:
         BPTree<String, Train> T;
-        Tickets tickets;
         OrderTime ticketCnts;
+        
+    public:
+        Tickets tickets;
 
     public:
         Trains(): T("data/data_trains") {}
@@ -110,13 +111,14 @@ namespace sjtu {
         
         bool Delete(const String &tid) {
             auto t = T.query(tid);
-            if (t.second == false) return false;
+            if (t.second == false || t.first.status == Train::Status::Public) return false;
             T.erase(tid);
             return true;
         }
         
         bool Modify(const String &tid, const String &name, char catalog, int stationCnt, int ticKindCnt, String *tickets, Station *stations) {
-            if (T.query(tid).second == false) return false;
+            auto t = T.query(tid);
+            if (t.second == false || t.first.status == Train::Status::Public) return false;
             T.modify(tid, Train(tid, name, catalog, stationCnt, ticKindCnt, tickets, stations));
             return true;
         }

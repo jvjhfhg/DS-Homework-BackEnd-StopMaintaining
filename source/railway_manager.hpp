@@ -451,7 +451,7 @@ namespace sjtu {
                     else res.push_back(t.first.stations[i].arriveTime.ToString());
                     if (i == t.first.stationCnt - 1) res.push_back("xx:xx");
                     else res.push_back(t.first.stations[i].startTime.ToString());
-                    if (i == 0 || i == t.first.stationCnt - 1) res.push_back("00:00");
+                    if (i == 0 || i == t.first.stationCnt - 1) res.push_back("xx:xx");
                     else res.push_back((t.first.stations[i].startTime - t.first.stations[i].arriveTime).ToString());
                     for (int j = 0; j < t.first.ticketKindCnt; ++j) {
                         static char tmp[45];

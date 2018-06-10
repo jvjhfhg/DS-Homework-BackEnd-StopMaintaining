@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fstream>
-#include "map.hpp"
+#include <map>
 #include "utility.hpp"
 #include "vector.hpp"
 
@@ -10,7 +10,7 @@ namespace sjtu {
     class BPTree {
         const char *filename;
         // std::map<Key, T, Compare> Tree;
-        map<Key, T, Compare> Tree;
+        std::map<Key, T, Compare> Tree;
         std::fstream io;
 
     public:
@@ -30,7 +30,7 @@ namespace sjtu {
             for (int i = 0; i < cnt; ++i) {
                 io.read((char *)(&key), sizeof key);
                 io.read((char *)(&val), sizeof val);
-                Tree.insert(make_pair(key, val));
+                Tree.insert(std::make_pair(key, val));
             }
             io.close();
         }
@@ -47,7 +47,7 @@ namespace sjtu {
         }
 
         void insert(const Key &key, const T &val) {
-            Tree.insert(make_pair(key, val));
+            Tree.insert(std::make_pair(key, val));
         }
 
         pair<T, bool> query(const Key &key) {
@@ -67,7 +67,7 @@ namespace sjtu {
         vector<pair<Key, T>> traverse() {
             vector<pair<Key, T>> res;
             for (auto i = Tree.begin(); i != Tree.end(); ++i)
-                res.push_back(*i);
+                res.push_back(make_pair(i->first, i->second));
             return res;
         }
         

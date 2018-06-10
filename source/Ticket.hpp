@@ -67,7 +67,7 @@ namespace sjtu {
             // T2.insert(tid, true);
 
             std::fstream datas(file.Str(), std::fstream::out | std::fstream::app | std::fstream::binary);
-            datas.write((const char *)(&tid), sizeof String);
+            datas.write((const char *)(&tid), sizeof(String));
             datas.close();
         }
         

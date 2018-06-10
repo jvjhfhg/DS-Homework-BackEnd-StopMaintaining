@@ -103,8 +103,8 @@ namespace sjtu {
                                 
                                 vec.push_back(String::Int(ticketLeft));
                                 static char tmp[45];
-                                //sprintf(tmp, "%s%f", train.stations[k].currency[tk].Str(), price);
-                                sprintf(tmp, "%f", price);
+                                sprintf(tmp, "%s%f", train.stations[k].currency[tk].Str(), price);
+                                // sprintf(tmp, "%f", price);
                                 // vec.push_back(train.stations[sta].currency[tk]);
                                 // vec.push_back(String::Float(price));
                                 vec.push_back(tmp);

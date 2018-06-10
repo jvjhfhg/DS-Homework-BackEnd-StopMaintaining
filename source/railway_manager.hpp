@@ -66,7 +66,7 @@ namespace sjtu {
             auto t = trains.tickets.Query(l1, l2, catalog);
             vector<vector<String>> res; 
             if (t.second == false || l1 == 0 || l2 == 0) {
-                return res; 
+                return res;
             }
             for (int i = 0; i < (int)t.first.size(); ++i) {
                 String tid = t.first[i];

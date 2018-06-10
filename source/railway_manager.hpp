@@ -61,7 +61,7 @@ namespace sjtu {
          * Ticket related
          */
 
-        static vector<vector<String>> _QueryTicket(const String &loc1, const String &loc2, const Date &date, char catalog) {
+        static vector<vector<String>> _QueryTicket(const String &loc1, const String &loc2, const Date &_date, char catalog) {
             int l1 = places.Query(loc1), l2 = places.Query(loc2);
             auto t = trains.tickets.Query(l1, l2, catalog);
             vector<vector<String>> res;
@@ -74,7 +74,13 @@ namespace sjtu {
                 res.push_back(vector<String>());
                 vector<String> &vec = res[res.size() - 1];
                 vec.push_back(tid);
+
+                int dd = 0;
                 for (int j = 0; j < train.stationCnt; ++j) if (train.stations[j].name == l1) {
+                    for (int k = 1; k <= j; ++k)
+                        if (train.stations[k].startTime < train.stations[k - 1].startTime) ++dd;
+                    Date date = _date + dd;
+
                     vec.push_back(loc1);
                     vec.push_back(date.ToString());
                     vec.push_back(train.stations[j].startTime.ToString());

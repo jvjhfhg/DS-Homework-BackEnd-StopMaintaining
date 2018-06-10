@@ -116,10 +116,6 @@ namespace sjtu {
         }
         
         void Clear() {
-            auto vec = T.traverse();
-            for (int i = 0; i < (int)vec.size(); ++i) {
-                BPTree<String, bool> T2(vec[i].first)
-            }
             T.clear();
         }
     };

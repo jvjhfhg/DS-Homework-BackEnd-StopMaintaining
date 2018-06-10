@@ -122,7 +122,7 @@ namespace sjtu {
 
         static vector<vector<String>> QueryTicket(const String &loc1, const String &loc2, const Date &date, const char *catalogs) {
             vector<vector<String>> res;
-            vector<vector<vector<String>>> tmp;
+            /* vector<vector<vector<String>>> tmp;
             vector<int> idxs;
             int totSize = 0;
             for (int i = 0, len = strlen(catalogs); i < len; ++i) {
@@ -138,6 +138,12 @@ namespace sjtu {
                         mn = i;
                 }
                 res.push_back(tmp[mn][idxs[mn]++]);
+            } */
+            for (int i = 0, len = strlen(catalogs); i < len; ++i) {
+                char catalog = catalogs[i];
+                auto tmp = _QueryTicket(loc1, loc2, date, catalog);
+                for (int i = 0; i < (int)tmp.size(); ++i)
+                    res.push_back(tmp[i]);
             }
             return res;
         }

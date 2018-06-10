@@ -103,7 +103,8 @@ namespace sjtu {
                                 
                                 vec.push_back(String::Int(ticketLeft));
                                 static char tmp[45];
-                                sprintf(tmp, "%s%f", train.stations[k].currency[tk].Str(), price);
+                                //sprintf(tmp, "%s%f", train.stations[k].currency[tk].Str(), price);
+                                sprintf(tmp, "%f", price);
                                 // vec.push_back(train.stations[sta].currency[tk]);
                                 // vec.push_back(String::Float(price));
                                 vec.push_back(tmp);
@@ -224,7 +225,8 @@ namespace sjtu {
                                     res.first.push_back(tr1.tickets[tk]);
                                     res.first.push_back(String::Int(ticCnt));
                                     static char tmp[45];
-                                    sprintf(tmp, "%s%f", tr1.stations[T1].currency[tk].Str(), price);
+                                    // sprintf(tmp, "%s%f", tr1.stations[T1].currency[tk].Str(), price);
+                                    sprintf(tmp, "%f", price);
                                     res.first.push_back(tmp);
                                 }
 
@@ -247,7 +249,8 @@ namespace sjtu {
                                     res.second.push_back(tr2.tickets[tk]);
                                     res.second.push_back(String::Int(ticCnt));
                                     static char tmp[45];
-                                    sprintf(tmp, "%s%f", tr2.stations[T2].currency[tk].Str(), price);
+                                    // sprintf(tmp, "%s%f", tr2.stations[T2].currency[tk].Str(), price);
+                                    sprintf(tmp, "%f", price);
                                     res.second.push_back(tmp);
                                 }
                             }
@@ -320,7 +323,8 @@ namespace sjtu {
                             for (int sta = st1 + 1; sta <= st2; ++sta)
                                 price += train.stations[sta].price[j];
                             static char tmp[45];
-                            sprintf(tmp, "%s%f", train.stations[st2].currency[j].Str(), price);
+                            // sprintf(tmp, "%s%f", train.stations[st2].currency[j].Str(), price);
+                            sprintf(tmp, "%f", price);
                             // vec.push_back(train.stations[sta].currency[tk]);
                             // vec.push_back(String::Float(price));
                             vec.push_back(tmp);
@@ -451,7 +455,8 @@ namespace sjtu {
                     else res.push_back((t.first.stations[i].startTime - t.first.stations[i].arriveTime).ToString());
                     for (int j = 0; j < t.first.ticketKindCnt; ++j) {
                         static char tmp[45];
-                        sprintf(tmp, "%s%f", t.first.stations[i].currency[j].Str(), t.first.stations[i].price[j]);
+                        // sprintf(tmp, "%s%f", t.first.stations[i].currency[j].Str(), t.first.stations[i].price[j]);
+                        sprintf(tmp, "%f", t.first.stations[i].price[j]);
                         res.push_back(tmp);
                         // res.push_back(String::Float());
                     }

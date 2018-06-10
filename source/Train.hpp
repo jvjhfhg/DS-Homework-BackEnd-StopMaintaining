@@ -88,7 +88,7 @@ namespace sjtu {
         Tickets tickets;
 
     public:
-        Trains(): T("data/data_trains") {}
+        Trains(): T("data_trains") {}
 
         ~Trains() = default;
 

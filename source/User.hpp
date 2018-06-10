@@ -44,8 +44,8 @@ namespace sjtu {
         int currentID;
         
     public:
-        Users(): T("data/data_users") {
-            std::fstream file("data/data_users_id", std::fstream::in);
+        Users(): T("data_users") {
+            std::fstream file("data_users_id", std::fstream::in);
             if (!file)
                 currentID = 2018;
             else
@@ -54,7 +54,7 @@ namespace sjtu {
         }
 
         ~Users() {
-            std::fstream idFile("data/data_users_id", std::fstream::out);
+            std::fstream idFile("data_users_id", std::fstream::out);
             idFile << currentID << std::endl;
             // std::cerr << currentID << std::endl;
             idFile.close();

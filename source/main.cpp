@@ -15,10 +15,14 @@ int main() {
     char a[45], b[45], c[45], d[45], e[45];
     int x, y, z;
     
-    // int cnt = 0;
+#ifdef LOCAL
+    int cnt = 0;
+#endif
 
     while (~scanf("%s", s)) {
-        // if (++cnt % 1000 == 0) std::cerr << cnt << std::endl;
+#ifdef LOCAL
+        if (++cnt % 1000 == 0) std::cerr << cnt << std::endl;
+#endif
 
         opt = s;
 
@@ -148,7 +152,9 @@ int main() {
             puts("1");
         } else if (opt == "exit") {
             puts("BYE");
+#ifndef LOCAL
             exit(0);
+#endif
         }
     }
 

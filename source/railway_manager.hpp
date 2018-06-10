@@ -172,7 +172,7 @@ namespace sjtu {
             return res;
         }
 
-        static pair<vector<String>, vector<String>> QueryTransfer(const String &loc1, const String &loc2, const Date &date, const char *catalogs) {
+        static pair<vector<String>, vector<String>> QueryTransfer(const String &loc1, const String &loc2, const Date &_date, const char *catalogs) {
             pair<vector<String>, vector<String>> res;
             pair<int, Time> duringTime(10000, "23:59");
             int l1 = places.Query(loc1), l2 = places.Query(loc2);
@@ -199,6 +199,13 @@ namespace sjtu {
                                 if (tr2.stations[i].name == mid) S2 = i;
                                 if (tr2.stations[i].name == l2) T2 = i;
                             }
+                            int dd1 = 0, dd2 = 0;
+                            for (int k = 1; k <= S1; ++k)
+                                if (tr1.stations[k].startTime < tr1.stations[k - 1].startTime) ++dd1;
+                            for (int k = 1; k <= S2; ++k)
+                                if (tr2.stations[k].startTime < tr2.stations[k - 1].startTime) ++dd2;
+                            Date date1 = _date + dd1, date2 = _date + dd2;
+
                             int deltaDay1 = 0, deltaDay2 = 0;
                             for (int sta = S1 + 1; sta <= T1; ++sta) {
                                 if ((sta != T1 && tr1.stations[sta].startTime < tr1.stations[sta - 1].startTime) ||
@@ -220,10 +227,10 @@ namespace sjtu {
 
                                 res.first.push_back(tr1.id);
                                 res.first.push_back(loc1);
-                                res.first.push_back(date.ToString());
+                                res.first.push_back(date1.ToString());
                                 res.first.push_back(tr1.stations[S1].startTime.ToString());
                                 res.first.push_back(midName);
-                                res.first.push_back((date + deltaDay1).ToString());
+                                res.first.push_back((date1 + deltaDay1).ToString());
                                 res.first.push_back(tr1.stations[T1].arriveTime.ToString());
                                 for (int tk = 0; tk < tr1.ticketKindCnt; ++tk) {
                                     int ticCnt = 2000, tdel = 0;
@@ -231,7 +238,7 @@ namespace sjtu {
                                     for (int sta = S1 + 1; sta <= T1; ++sta) {
                                         if ((sta != T1 && tr1.stations[sta].startTime < tr1.stations[sta - 1].startTime) ||
                                             (sta == T1 && tr1.stations[sta].arriveTime < tr1.stations[sta - 1].startTime)) ++tdel;
-                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr1.id, tk, sta, (date + tdel).ToString()));
+                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr1.id, tk, sta, (date1 + tdel).ToString()));
                                         price += tr1.stations[sta].price[tk];
                                     }
                                     res.first.push_back(tr1.tickets[tk]);
@@ -244,10 +251,10 @@ namespace sjtu {
 
                                 res.second.push_back(tr2.id);
                                 res.second.push_back(midName);
-                                res.second.push_back((date + deltaDay1 + deltaDay).ToString());
+                                res.second.push_back((date2 + deltaDay1 + deltaDay).ToString());
                                 res.second.push_back(tr2.stations[S2].startTime.ToString());
                                 res.second.push_back(loc2);
-                                res.second.push_back((date + deltaDay1 + deltaDay + deltaDay2).ToString());
+                                res.second.push_back((date2 + deltaDay1 + deltaDay + deltaDay2).ToString());
                                 res.second.push_back(tr2.stations[T2].arriveTime.ToString());
                                 for (int tk = 0; tk < tr2.ticketKindCnt; ++tk) {
                                     int ticCnt = 2000, tdel = 0;
@@ -255,7 +262,7 @@ namespace sjtu {
                                     for (int sta = S2 + 1; sta <= T2; ++sta) {
                                         if ((sta != T2 && tr2.stations[sta].startTime < tr2.stations[sta - 1].startTime) ||
                                             (sta == T2 && tr2.stations[sta].arriveTime < tr2.stations[sta - 1].startTime)) ++tdel;
-                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr2.id, tk, sta, (date + deltaDay1 + deltaDay + tdel).ToString()));
+                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr2.id, tk, sta, (date2 + deltaDay1 + deltaDay + tdel).ToString()));
                                         price += tr2.stations[sta].price[tk];
                                     }
                                     res.second.push_back(tr2.tickets[tk]);

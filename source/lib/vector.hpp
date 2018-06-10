@@ -6,8 +6,6 @@
 #include <cstddef>
 #include <iostream>
 
-using namespace std;
-
 namespace sjtu {
 /**
  * a data container like std::vector

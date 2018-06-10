@@ -449,7 +449,7 @@ namespace sjtu {
                     res.push_back(tmp);
                     if (i == 0) res.push_back("xx:xx");
                     else res.push_back(t.first.stations[i].arriveTime.ToString());
-                    if (i == t.first.stationCnt - 1) res.push_back("xx:xx");
+                    if (i == t.first.stationCnt - 1) res.push_back(t.first.stations[i].arriveTime.ToString());
                     else res.push_back(t.first.stations[i].startTime.ToString());
                     if (i == 0 || i == t.first.stationCnt - 1) res.push_back("xx:xx");
                     else res.push_back((t.first.stations[i].startTime - t.first.stations[i].arriveTime).ToString());

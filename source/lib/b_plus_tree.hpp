@@ -17,11 +17,11 @@ namespace sjtu {
         static const int K = 4096;
 
 		//max1,max2è®°å½•çš„åˆ†åˆ«æ˜¯è¿‡æ¸¡èŠ‚ç‚¹ã€å¶å­èŠ‚ç‚¹çš„æœ€å¤§ç©ºé—´ï¼Œmin1,min2åˆ†åˆ«ä¸ºå‰è€…çš„ä¸€åŠ;
-		static const int max1 = 32; // 2000 * 8 / (sizeof(Key));
-		static const int max2 = 32; // 2000 * 8 / (sizeof(T));
+		static const int max1 = 20; // 2000 * 8 / (sizeof(Key));
+		static const int max2 = 20; // 2000 * 8 / (sizeof(T));
 		static const int min1 = max1 / 2;
 		static const int min2 = max2 / 2;
-		static const int max0 = 32;
+		static const int max0 = 20;
 
 		//èŠ‚ç‚¹ä¿å­˜äº†å½“å‰èŠ‚ç‚¹çš„ä½ç½®ï¼Œçˆ¶äº²çš„ä½ç½®ï¼Œå‰é©±ã€åŽç»§çš„ä½ç½®ï¼Œä¸€äº›ä¿¡æ¯ï¼Œå¤§å°ï¼Œæ˜¯å¦æ˜¯å¶å­èŠ‚ç‚¹;
 		//æ‰€æœ‰çš„æ•°ç»„éƒ½æ˜¯0_based;
@@ -152,6 +152,10 @@ namespace sjtu {
 		//æŸ¥æ‰¾ä¸»å‡½æ•°;
 		pair<T, bool> query(const Key& kk) {
 			char* tmp[K];
+			if(at_end == 2 * K){
+		        T XX;
+		        return(pair<T , bool>){XX , false};
+            }
 			ll p = search_node(kk);
 			file_seek(p);
 			fread(tmp, K, 1, File);

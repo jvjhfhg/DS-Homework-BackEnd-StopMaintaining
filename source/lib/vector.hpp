@@ -7,12 +7,6 @@
 #include <iostream>
 
 namespace sjtu {
-#include <vector>
-    using std::vector;
-}
-
-#ifdef cnbb
-namespace sjtu {
 /**
  * a data container like std::vector
  * store data in a successive memory and support random access.
@@ -644,4 +638,3 @@ public:
 
 
 }
-#endif

@@ -69,7 +69,7 @@ namespace sjtu {
                 return res; 
             }
             for (int i = 0; i < (int)t.first.size(); ++i) {
-                String tid = t.first[i].first;
+                String tid = t.first[i];
                 Train train = trains.Query(tid).first;
                 res.push_back(vector<String>());
                 vector<String> &vec = res[res.size() - 1];
@@ -181,8 +181,8 @@ namespace sjtu {
 
                     for (int i1 = 0; i1 < (int)t1.first.size(); ++i1)
                         for (int i2 = 0; i2 < (int)t2.first.size(); ++i2) {
-                            Train tr1 = trains.Query(t1.first[i1].first).first;
-                            Train tr2 = trains.Query(t2.first[i2].first).first;
+                            Train tr1 = trains.Query(t1.first[i1]).first;
+                            Train tr2 = trains.Query(t2.first[i2]).first;
 
                             int S1, T1, S2, T2;
                             for (int i = 0; i < tr1.stationCnt; ++i) {

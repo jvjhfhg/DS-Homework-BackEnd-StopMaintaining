@@ -18,7 +18,7 @@ int main() {
     // int cnt = 0;
 
     while (~scanf("%s", s)) {
-        // std::cerr << ++cnt << std::endl;
+        // if (++cnt % 1000 == 0) std::cerr << cnt << std::endl;
 
         opt = s;
 

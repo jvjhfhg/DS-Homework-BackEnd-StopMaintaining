@@ -34,12 +34,20 @@ namespace sjtu {
     public:
         Tickets(): T("data_tickets") {}
         
-        pair<vector<pair<String, bool>>, bool> Query(int loc1, int loc2, char catalog) {
+        pair<vector<String>, bool> Query(int loc1, int loc2, char catalog) {
             auto t = T.query(KeyData(loc1, loc2, catalog));
-            if (t.second == false) return make_pair(vector<pair<String, bool>>(), false);
+            if (t.second == false) return make_pair(vector<String>(), false);
             
-            BPTree<String, bool> T2(t.first.Str());
-            return make_pair(T2.traverse(), true);
+            // BPTree<String, bool> T2(t.first.Str());
+            // return make_pair(T2.traverse(), true);
+
+            vector<String> res;
+            std::fstream datas(t.first.Str(), std::fstream::in | std::fstream::binary);
+            String tmp;
+            while (datas.read((char *)(&tmp), sizeof tmp)) {
+                res.push_back(tmp);
+            }
+            datas.close();
         }
         
         void Insert(int loc1, int loc2, char catalog, const String &tid) {
@@ -55,15 +63,18 @@ namespace sjtu {
                 file = t.first;
             }
             
-            BPTree<String, bool> T2(file.Str());
-            T2.insert(tid, true);
+            // BPTree<String, bool> T2(file.Str());
+            // T2.insert(tid, true);
+
+            std::fstream datas(file.Str(), std::fstream::out | std::fstream::app | std::fstream::binary);
+            datas.write((const char *)(&tid), sizeof tid);
+            datas.close();
         }
         
         void Clear() {
             auto vec = T.traverse();
             for (int i = 0; i < (int)vec.size(); ++i) {
-                BPTree<String, bool> T2(vec[i].second.Str());
-                T2.clear();
+                std::fstream datas(vec[i].second.Str(), std::fstream::out);
             }
             T.clear();
         }

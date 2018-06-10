@@ -48,6 +48,7 @@ namespace sjtu {
                 res.push_back(tmp);
             }
             datas.close();
+            return make_pair(res, true);
         }
         
         void Insert(int loc1, int loc2, char catalog, const String &tid) {
@@ -72,9 +73,11 @@ namespace sjtu {
         }
         
         void Clear() {
+            static std::fstream datas;
             auto vec = T.traverse();
             for (int i = 0; i < (int)vec.size(); ++i) {
-                std::fstream datas(vec[i].second.Str(), std::fstream::out);
+                datas.open(vec[i].second.Str(), std::fstream::out);
+                datas.close();
             }
             T.clear();
         }

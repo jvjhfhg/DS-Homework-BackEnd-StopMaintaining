@@ -86,7 +86,8 @@ namespace sjtu {
                             if (train.stations[k].arriveTime < train.stations[k - 1].startTime) ++deltaDay;
 
                             vec.push_back(loc2);
-                            vec.push_back((date + deltaDay).ToString());
+                            // vec.push_back((date + deltaDay).ToString());
+                            vec.push_back(date.ToString());
                             vec.push_back(train.stations[k].arriveTime.ToString());
 
                             for (int tk = 0; tk < train.ticketKindCnt; ++tk) {
@@ -98,7 +99,8 @@ namespace sjtu {
                                 for (int sta = j + 1; sta <= k; ++sta) {
                                     if ((sta != k && train.stations[sta].startTime < train.stations[sta - 1].startTime) || 
                                         (sta == k && train.stations[sta].arriveTime < train.stations[sta - 1].startTime)) ++deltaDay;
-                                    ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date + deltaDay));
+                                    // ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date + deltaDay));
+                                    ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date));
                                     price += train.stations[sta].price[tk];
                                 }
                                 
@@ -219,7 +221,8 @@ namespace sjtu {
                                 res.first.push_back(date.ToString());
                                 res.first.push_back(tr1.stations[S1].startTime.ToString());
                                 res.first.push_back(midName);
-                                res.first.push_back((date + deltaDay1).ToString());
+                                // res.first.push_back((date + deltaDay1).ToString());
+                                res.first.push_back(date.ToString());
                                 res.first.push_back(tr1.stations[T1].arriveTime.ToString());
                                 for (int tk = 0; tk < tr1.ticketKindCnt; ++tk) {
                                     int ticCnt = 2000, tdel = 0;
@@ -227,7 +230,8 @@ namespace sjtu {
                                     for (int sta = S1 + 1; sta <= T1; ++sta) {
                                         if ((sta != T1 && tr1.stations[sta].startTime < tr1.stations[sta - 1].startTime) ||
                                             (sta == T1 && tr1.stations[sta].arriveTime < tr1.stations[sta - 1].startTime)) ++tdel;
-                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr1.id, tk, sta, (date + tdel).ToString()));
+                                        // ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr1.id, tk, sta, (date + tdel).ToString()));
+                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr1.id, tk, sta, date.ToString()));
                                         price += tr1.stations[sta].price[tk];
                                     }
                                     res.first.push_back(tr1.tickets[tk]);
@@ -240,10 +244,12 @@ namespace sjtu {
 
                                 res.second.push_back(tr2.id);
                                 res.second.push_back(midName);
-                                res.second.push_back((date + deltaDay1 + deltaDay).ToString());
+                                // res.second.push_back((date + deltaDay1 + deltaDay).ToString());
+                                res.second.push_back(date.ToString());
                                 res.second.push_back(tr2.stations[S2].startTime.ToString());
                                 res.second.push_back(loc2);
-                                res.second.push_back((date + deltaDay1 + deltaDay + deltaDay2).ToString());
+                                // res.second.push_back((date + deltaDay1 + deltaDay + deltaDay2).ToString());
+                                res.second.push_back(date.ToString());
                                 res.second.push_back(tr2.stations[T2].arriveTime.ToString());
                                 for (int tk = 0; tk < tr2.ticketKindCnt; ++tk) {
                                     int ticCnt = 2000, tdel = 0;
@@ -251,7 +257,8 @@ namespace sjtu {
                                     for (int sta = S2 + 1; sta <= T2; ++sta) {
                                         if ((sta != T2 && tr2.stations[sta].startTime < tr2.stations[sta - 1].startTime) ||
                                             (sta == T2 && tr2.stations[sta].arriveTime < tr2.stations[sta - 1].startTime)) ++tdel;
-                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr2.id, tk, sta, (date + deltaDay1 + deltaDay + tdel).ToString()));
+                                        // ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr2.id, tk, sta, (date + deltaDay1 + deltaDay + tdel).ToString()));
+                                        ticCnt = std::min(ticCnt, 2000 - orderTime.Query(tr2.id, tk, sta, date.ToString()));
                                         price += tr2.stations[sta].price[tk];
                                     }
                                     res.second.push_back(tr2.tickets[tk]);
@@ -285,20 +292,23 @@ namespace sjtu {
                     for (int sta = i + 1; sta <= j; ++sta) {
                         if ((sta != j && train.stations[sta].startTime < train.stations[sta - 1].startTime) ||
                             (sta == j && train.stations[sta].arriveTime < train.stations[sta - 1].startTime)) ++deltaDay;
-                        ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date + deltaDay));
+                        // ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date + deltaDay));
+                        ticketLeft = std::min(ticketLeft, 2000 - orderTime.Query(tid, tk, sta, date));
                     }
                     if (ticketLeft < num) return false;
                     deltaDay = 0;
                     for (int sta = i + 1; sta <= j; ++sta) {
                         if ((sta != j && train.stations[sta].startTime < train.stations[sta - 1].startTime) ||
                             (sta == j && train.stations[sta].arriveTime < train.stations[sta - 1].startTime)) ++deltaDay;
-                        orderTime.Add(tid, tk, sta, date + deltaDay, num);
+                        // orderTime.Add(tid, tk, sta, date + deltaDay, num);
+                        orderTime.Add(tid, tk, sta, date, num);
                     }
 
                     int tmp[] = {0, 0, 0, 0, 0};
                     tmp[tk] = num;
 
-                    orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date + deltaDay, train.stations[j].arriveTime, tmp);
+                    // orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date + deltaDay, train.stations[j].arriveTime, tmp);
+                    orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date, train.stations[j].arriveTime, tmp);
 
                     return true;
                 }
@@ -375,13 +385,15 @@ namespace sjtu {
                     for (int sta = i + 1; sta <= j; ++sta) {
                         if ((sta != j && train.stations[sta].startTime < train.stations[sta - 1].startTime) ||
                             (sta == j && train.stations[sta].arriveTime < train.stations[sta - 1].startTime)) ++deltaDay;
-                        orderTime.Add(tid, tk, sta, date + deltaDay, -num);
+                        // orderTime.Add(tid, tk, sta, date + deltaDay, -num);
+                        orderTime.Add(tid, tk, sta, date, -num);
                     }
 
                     int tmp[] = {0, 0, 0, 0, 0};
                     tmp[tk] = -num;
 
-                    orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date + deltaDay, train.stations[j].arriveTime, tmp);
+                    // orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date + deltaDay, train.stations[j].arriveTime, tmp);
+                    orderUser.Add(id, tid, train.catalog, l1, date, train.stations[i].startTime, l2, date, train.stations[j].arriveTime, tmp);
 
                     return true;
                 }

@@ -15,8 +15,10 @@
 namespace sjtu
 {
     Places places;
+
     Users users;
     Trains trains;
+
     OrderTime orderTime;
     OrderUser orderUser;
 
@@ -37,6 +39,7 @@ namespace sjtu
             return users.Login(id, password);
         }
 
+        // If second is false, the user doesn't exist.
         static vector<String> QueryProfile(int id)
         {
             vector<String> res;
@@ -48,7 +51,7 @@ namespace sjtu
                 res.push_back(t.first.name);
                 res.push_back(t.first.email);
                 res.push_back(t.first.phone);
-                res.push_back(String::Int(t.first.priv));
+                res.push_back(String::Int((int)t.first.priv));
             }
             return res;
         }
@@ -60,7 +63,7 @@ namespace sjtu
 
         static bool ModifyPrivilege(int id1, int id2, int priv)
         {
-            return users.ModifyPrivilege(id1, id2, priv);
+            return users.ModifyPrivilege(id1, id2, (User::Privilege)priv);
         }
 
         /*
@@ -141,6 +144,23 @@ namespace sjtu
         static vector<vector<String>> QueryTicket(const String &loc1, const String &loc2, const Date &date, const char *catalogs)
         {
             vector<vector<String>> res;
+            /* vector<vector<vector<String>>> tmp;
+            vector<int> idxs;
+            int totSize = 0;
+            for (int i = 0, len = strlen(catalogs); i < len; ++i) {
+                char catalog = catalogs[i];
+                tmp.push_back(_QueryTicket(loc1, loc2, date, catalog));
+                idxs.push_back(0);
+                totSize += tmp.back().size();
+            }
+            while (totSize--) {
+                int mn = -1;
+                for (int i = 0; i < tmp.size(); ++i) if (idxs[i] < tmp[i].size()) {
+                    if (mn == -1 || tmp[i][idxs[i]].front() < tmp[mn][idxs[mn]].front())
+                        mn = i;
+                }
+                res.push_back(tmp[mn][idxs[mn]++]);
+            } */
             for (int i = 0, len = strlen(catalogs); i < len; ++i)
             {
                 char catalog = catalogs[i];
@@ -454,32 +474,32 @@ namespace sjtu
             }
         }
 
-        static bool AddTrain(const vector<String> &vs)
+        static bool AddTrain(const vector<String> &commands)
         {
-            int id = 0;
-            String tid = vs[id++];
-            String name = vs[id++];
-            char catalog = *vs[id++].Str();
-            int stationCnt = vs[id++].ToInt();
-            int ticKindCnt = vs[id++].ToInt();
+            int idx = 0;
+            String tid = commands[idx++];
+            String name = commands[idx++];
+            char catalog = *commands[idx++].Str();
+            int stationCnt = commands[idx++].ToInt();
+            int ticKindCnt = commands[idx++].ToInt();
             String tickets[5];
             for (int i = 0; i < ticKindCnt; ++i)
-                tickets[i] = vs[id++];
+                tickets[i] = commands[idx++];
             Station stations[60];
             for (int i = 0; i < stationCnt; ++i)
             {
-                if (places.Query(vs[id]) == 0)
-                    places.Insert(vs[id]);
-                stations[i].name = places.Query(vs[id++]);
-                stations[i].arriveTime = (i == 0 ? Time("00:00") : Time(vs[id].Str()));
-                ++id;
-                stations[i].startTime = (i == stationCnt - 1 ? Time("00:00") : Time(vs[id].Str()));
-                ++id;
-                ++id;
+                if (places.Query(commands[idx]) == 0)
+                    places.Insert(commands[idx]);
+                stations[i].name = places.Query(commands[idx++]);
+                stations[i].arriveTime = (i == 0 ? Time("00:00") : Time(commands[idx].Str()));
+                ++idx;
+                stations[i].startTime = (i == stationCnt - 1 ? Time("00:00") : Time(commands[idx].Str()));
+                ++idx;
+                ++idx;
                 for (int j = 0; j < ticKindCnt; ++j)
                 {
                     static char tmp[45];
-                    Read(vs[id++].Str(), tmp, stations[i].price[j]);
+                    Read(commands[idx++].Str(), tmp, stations[i].price[j]);
                     stations[i].currency[j] = tmp;
                 }
             }
@@ -496,7 +516,8 @@ namespace sjtu
             vector<vector<String>> res;
             res.push_back(vector<String>());
             auto t = trains.Query(tid);
-            if (t.second == false || t.first.status == 0)
+            // if (t.second == false || t.first.status == Train::Status::Private)
+            if (t.second == false)
                 res[0].push_back("0");
             else
             {
@@ -514,6 +535,10 @@ namespace sjtu
                 {
                     res.push_back(vector<String>());
                     vector<String> &vec = res[res.size() - 1];
+                    // String str = places.QueryName(t.first.stations[i].name);
+                    // tmp[0] = '\n';
+                    // sprintf(tmp + 1, "%s", str.Str());
+                    // sprintf(tmp, "%s", str.Str());
                     vec.push_back(places.QueryName(t.first.stations[i].name));
                     if (i == 0) vec.push_back("xx:xx");
                     else vec.push_back(t.first.stations[i].arriveTime.ToString());
@@ -525,7 +550,9 @@ namespace sjtu
                     {
                         static char tmp[45];
                         sprintf(tmp, "%s%f", t.first.stations[i].currency[j].Str(), t.first.stations[i].price[j]);
+                        // sprintf(tmp, "%f", t.first.stations[i].price[j]);
                         vec.push_back(tmp);
+                        // res.push_back(String::Float());
                     }
                 }
             }
@@ -537,32 +564,32 @@ namespace sjtu
             return trains.Delete(tid);
         }
 
-        static bool ModifyTrain(const vector<String> &vs)
+        static bool ModifyTrain(const vector<String> &commands)
         {
-            int id = 0;
-            String tid = vs[id++];
-            String name = vs[id++];
-            char catalog = *vs[id++].Str();
-            int stationCnt = vs[id++].ToInt();
-            int ticKindCnt = vs[id++].ToInt();
+            int idx = 0;
+            String tid = commands[idx++];
+            String name = commands[idx++];
+            char catalog = *commands[idx++].Str();
+            int stationCnt = commands[idx++].ToInt();
+            int ticKindCnt = commands[idx++].ToInt();
             String tickets[5];
             for (int i = 0; i < ticKindCnt; ++i)
-                tickets[i] = vs[id++];
+                tickets[i] = commands[idx++];
             Station stations[60];
             for (int i = 0; i < stationCnt; ++i)
             {
-                if (places.Query(vs[id]) == 0)
-                    places.Insert(vs[id]);
-                stations[i].name = places.Query(vs[id++]);
-                stations[i].arriveTime = (i == 0 ? Time("00:00") : Time(vs[id].Str()));
-                ++id;
-                stations[i].startTime = (i == stationCnt - 1 ? Time("00:00") : Time(vs[id].Str()));
-                ++id;
-                ++id;
+                if (places.Query(commands[idx]) == 0)
+                    places.Insert(commands[idx]);
+                stations[i].name = places.Query(commands[idx++]);
+                stations[i].arriveTime = (i == 0 ? Time("00:00") : Time(commands[idx].Str()));
+                ++idx;
+                stations[i].startTime = (i == stationCnt - 1 ? Time("00:00") : Time(commands[idx].Str()));
+                ++idx;
+                ++idx;
                 for (int j = 0; j < ticKindCnt; ++j)
                 {
                     static char tmp[45];
-                    Read(vs[id++].Str(), tmp, stations[i].price[j]);
+                    Read(commands[idx++].Str(), tmp, stations[i].price[j]);
                     stations[i].currency[j] = tmp;
                 }
             }

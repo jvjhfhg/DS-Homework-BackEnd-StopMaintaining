@@ -119,7 +119,8 @@ int main() {
             scanf("%s", a);
             auto res = sjtu::Interactor::QueryTrain(a);
             for (int i = 0; i < (int)res.size(); ++i)
-                printf("%s%c", res[i].Str(), " \n"[i == (int)res.size() - 1]);
+                for (int j = 0; j < (int)res[i].size(); ++j)
+                    printf("%s%c", res[i][j].Str(), " \n"[j == (int)res[i].size() - 1]);
         } else if (opt == "delete_train") {
             scanf("%s", a);
             printf("%d\n", (int)sjtu::Interactor::DeleteTrain(a));

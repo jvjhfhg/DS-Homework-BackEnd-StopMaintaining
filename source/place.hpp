@@ -8,15 +8,15 @@ namespace sjtu
 {
     class Places
     {
-        FileMap<String, int> T;
+        FileMap<String, int> T1;
         FileMap<int, String> T2;
 
     public:
-        Places(): T("data_name_places.rwdb"), T2("data_id_places.rwdb") {}
+        Places(): T1("data_name_places.rwdb"), T2("data_id_places.rwdb") {}
 
         int Query(const String &name)
         {
-            return T.query(name).first;
+            return T1.query(name).first;
         }
 
         String QueryName(int idx)
@@ -26,19 +26,19 @@ namespace sjtu
 
         void Insert(const String &name)
         {
-            if (T.count(name)) return;
-            T2.insert(T.size() + 1, name);
-            T.insert(name, T.size() + 1);
+            if (T1.count(name)) return;
+            T2.insert(T1.size() + 1, name);
+            T1.insert(name, T1.size() + 1);
         }
 
         int Size() const
         {
-            return T.size();
+            return T1.size();
         }
 
         void Clear()
         {
-            T.clear();
+            T1.clear();
             T2.clear();
         }
     };

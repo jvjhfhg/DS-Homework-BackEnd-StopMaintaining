@@ -13,16 +13,11 @@ namespace sjtu
     class User
     {
     public:
-        enum Privilege
-        {
-            Unregistered = 0, Normal = 1, Admin = 2
-        };
-
         String name;
         String password;
         String email;
         String phone;
-        Privilege priv;
+        int priv;
         int id;
 
         User() = default;
@@ -30,8 +25,8 @@ namespace sjtu
         User(const char *_name, const char *_password, const char *_email, const char *_phone, int _id):
             name(_name), password(_password), email(_email), phone(_phone), id(_id)
         {
-            if (id == 2018) priv = Privilege::Admin;
-            else priv = Privilege::Normal;
+            if (id == 2018) priv = 2;
+            else priv = 1;
         }
 
         void Modify(const char *_name, const char *_password, const char *_email, const char *_phone)
@@ -47,33 +42,30 @@ namespace sjtu
     {
     private:
         BPTree<int, User> T;
-        int currentID;
+        int curid;
 
     public:
         Users(): T("data_users.rwdb")
         {
             std::fstream file("data_users_id.rwdb", std::fstream::in);
             if (!file)
-                currentID = 2018;
+                curid = 2018;
             else
-                file >> currentID;
+                file >> curid;
             file.close();
         }
 
         ~Users()
         {
             std::fstream idFile("data_users_id.rwdb", std::fstream::out);
-            idFile << currentID << std::endl;
-            // std::cerr << currentID << std::endl;
+            idFile << curid << std::endl;
             idFile.close();
         }
 
         int Register(const char *name, const char *password, const char *email, const char *phone)
         {
-            // std::cerr << "in" << std::endl;
-            T.insert(currentID, User(name, password, email, phone, currentID));
-            // std::cerr << "out" << std::endl;
-            return currentID++;
+            T.insert(curid, User(name, password, email, phone, curid));
+            return curid++;
         }
 
         bool Login(int id, const String &password)
@@ -99,12 +91,12 @@ namespace sjtu
             return true;
         }
 
-        bool ModifyPrivilege(int id1, int id2, User::Privilege priv)
+        bool ModifyPrivilege(int id1, int id2, int priv)
         {
             auto user = T.query(id1);
-            if (user.second == false || user.first.priv != User::Privilege::Admin) return false;
+            if (user.second == false || user.first.priv != 2) return false;
             user = T.query(id2);
-            if (user.second == false || (user.first.priv == User::Privilege::Admin && priv == User::Privilege::Normal)) return false;
+            if (user.second == false || (user.first.priv == 2 && priv == 1)) return false;
             user.first.priv = priv;
             T.modify(id2, user.first);
             return true;
@@ -113,7 +105,7 @@ namespace sjtu
         void Clear()
         {
             T.clear();
-            currentID = 2018;
+            curid = 2018;
         }
     };
 }

@@ -510,7 +510,7 @@ namespace sjtu
                 res[0].push_back(String::Int(t.first.ticketKindCnt));
                 for (int i = 0; i < t.first.ticketKindCnt; ++i)
                     res[0].push_back(t.first.tickets[i]);
-                for (int i = 0; i < t.first.stationCnt; ++i)59+02
+                for (int i = 0; i < t.first.stationCnt; ++i)
                 {
                     res.push_back(vector<String>());
                     vector<String> &vec = res[res.size() - 1];

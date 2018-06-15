@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include <string>
+
 namespace sjtu {
     template <class Type>
     void swap(Type &a, Type &b) {
@@ -96,16 +98,28 @@ namespace sjtu {
             return res;
         }
 
-        const int ToInt() const {
+        int ToInt() const {
             static int x;
             sscanf(_str, "%d", &x);
             return x;
         }
 
-        const double ToFloat() const {
+        double ToFloat() const {
             static double x;
             sscanf(_str, "%lf", &x);
             return x;
+        }
+
+        operator std::string() const {
+            return std::string(_str);
+        }
+        
+        char &operator [] (int x) {
+            return _str[x];
+        }
+        
+        const char operator [] (int x) const {
+            return _str[x];
         }
     };
 

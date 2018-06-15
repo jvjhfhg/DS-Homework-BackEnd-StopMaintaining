@@ -75,7 +75,7 @@ namespace sjtu {
             return Tree.count(key);
         }
         
-        int Size() const {
+        int size() const {
             return Tree.size();
         }
 

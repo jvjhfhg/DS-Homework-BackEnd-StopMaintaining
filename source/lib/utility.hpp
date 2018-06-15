@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 namespace sjtu {
     template <class T1, class T2>
     class pair {
@@ -57,6 +59,10 @@ namespace sjtu {
         
         friend bool operator != (const pair &x, const pair &y) {
             return !(x == y);
+        }
+
+        operator std::pair<T1, T2>() const {
+            return std::make_pair(first, second);
         }
     };
     

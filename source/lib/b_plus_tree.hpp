@@ -157,7 +157,7 @@ namespace sjtu {
 			char* tmp[K];
 			if(at_end == 2 * K){
 				T XX;
-				return (pair<T, bool>){XX , false};
+				return make_pair(XX , false);
 			}
 			ll p = search_node(kk);
 			file_seek(p);
